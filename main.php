@@ -8,14 +8,16 @@ $block_re = '#(?P<title>.+?)\s\((?P<lastname>.*),\s(?P<firstname>.*)\)\n(?P<type
 
 preg_match_all($block_re, $contents, $matches, PREG_SET_ORDER);
 
-echo "Highlight,Title,Author,URL,Note,Location,Date" . "\n";
+$csv_file = fopen("output.csv", "w");
+
+// Highlight,Title,Author,URL,Note,Location,Date
+
+fputcsv($csv_file, ["Highlight", "Title", "Author", "URL", "Note", "Location", "Date"]);
 
 foreach ($matches as $match) {
-    echo "Title: " . $match['title'] . "\n";
-    echo "Author: " . $match['firstname'] . " " . $match['lastname'] . "\n";
-    echo "Type: " . $match['type'] . "\n";
-    echo "location: " . $match['location'] . "\n";
-    echo "note: " . $match['note'] . "\n";
-    echo "highlight: " . $match['highlight'] . "\n";
-    echo "---" . "\n";
+    $author = "{$match['firstname']} {$match['lastname']}";
+    $date = "{$match['year']}-{$match['month']}-{$match['day']} {$match['hour']}:{$match['minutes']}:00";
+    fputcsv($csv_file, [$match['highlight'], $match['title'], $author, null, $match['note'], $match['location'], $date]);
 }
+
+fclose($csv_file);
